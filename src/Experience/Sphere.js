@@ -36,6 +36,9 @@ export default class Sphere
     setGeometry()
     {
         this.geometry = new THREE.SphereGeometry(1, 512, 512)
+        this.geometry.computeTangents()
+
+        console.log(this.geometry)
     }
 
     setMaterial()
@@ -48,6 +51,10 @@ export default class Sphere
                 uDisplacementFrequency: { value: 2.0 },
                 uDisplacementStrength: { value: 0.2 },
                 uTime: { value: 0 }
+            },
+            defines:
+            {
+                USE_TANGENT: ''
             },
             vertexShader: vertexShader,
             fragmentShader: fragmentShader
