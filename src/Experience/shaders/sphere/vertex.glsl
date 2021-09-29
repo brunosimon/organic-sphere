@@ -1,3 +1,7 @@
+uniform float uDistortionFrequency;
+uniform float uDistortionStrength;
+uniform float uDisplacementFrequency;
+uniform float uDisplacementStrength;
 uniform float uTime;
 
 varying vec3 vNormal;
@@ -8,18 +12,13 @@ varying float vPerlinStrength;
 
 void main()
 {
-    float uDistortionFrequency = 2.0;
-    float uDistortionStrength = 1.0;
-    float uDisplacementFrequency = 2.0;
-    float uDisplacementStrength = 0.2;
-
     vec3 displacementPosition = position;
-    displacementPosition += perlin4d(vec4(displacementPosition * uDistortionFrequency, uTime * 0.00012)) * uDistortionStrength;
+    displacementPosition += perlin4d(vec4(displacementPosition * uDistortionFrequency, uTime)) * uDistortionStrength;
 
-    float perlinStrength = perlin4d(vec4(displacementPosition * uDisplacementFrequency, uTime * 0.0001)) * uDisplacementStrength;
+    float perlinStrength = perlin4d(vec4(displacementPosition * uDisplacementFrequency, uTime));
     
     vec3 newPosition = position;
-    newPosition += normal * perlinStrength;
+    newPosition += normal * perlinStrength * uDisplacementStrength;
 
     vec4 viewPosition = viewMatrix * vec4(newPosition, 1.0);
     gl_Position = projectionMatrix * viewPosition;
