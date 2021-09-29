@@ -1,7 +1,7 @@
 # Organic Sphere
 
 - [GitHub](https://github.com/brunosimon/organic-sphere)
-- Live 🚧
+- [Live](https://organic-sphere.vercel.app)
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
