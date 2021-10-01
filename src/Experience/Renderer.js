@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import Experience from './Experience.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 
 export default class Renderer
 {
@@ -16,7 +17,14 @@ export default class Renderer
         this.scene = this.experience.scene
         this.camera = this.experience.camera
         
-        this.usePostprocess = false
+        this.usePostprocess = true
+
+        if(this.debug)
+        {
+            this.debugFolder = this.debug.addFolder({
+                title: 'renderer'
+            })
+        }
 
         this.setInstance()
         this.setPostProcess()
@@ -65,9 +73,55 @@ export default class Renderer
         this.postProcess = {}
 
         /**
-         * Render pass
+         * Passes
          */
+        // Render pass
         this.postProcess.renderPass = new RenderPass(this.scene, this.camera.instance)
+
+        // Bloom pass
+        this.postProcess.unrealBloomPass = new UnrealBloomPass(
+            new THREE.Vector2(this.sizes.width, this.sizes.height),
+            0.8,
+            0.315,
+            0
+        )
+        this.postProcess.unrealBloomPass.enabled = true
+
+        if(this.debug)
+        {
+            const debugFolder = this.debugFolder
+                .addFolder({
+                    title: 'UnrealBloomPass'
+                })
+
+            debugFolder
+                .addInput(
+                    this.postProcess.unrealBloomPass,
+                    'enabled',
+                    {  }
+                )
+
+            debugFolder
+                .addInput(
+                    this.postProcess.unrealBloomPass,
+                    'strength',
+                    { min: 0, max: 3, step: 0.001 }
+                )
+
+            debugFolder
+                .addInput(
+                    this.postProcess.unrealBloomPass,
+                    'radius',
+                    { min: 0, max: 1, step: 0.001 }
+                )
+
+            debugFolder
+                .addInput(
+                    this.postProcess.unrealBloomPass,
+                    'threshold',
+                    { min: 0, max: 1, step: 0.001 }
+                )
+        }
 
         /**
          * Effect composer
@@ -90,6 +144,7 @@ export default class Renderer
         this.postProcess.composer.setPixelRatio(this.config.pixelRatio)
 
         this.postProcess.composer.addPass(this.postProcess.renderPass)
+        this.postProcess.composer.addPass(this.postProcess.unrealBloomPass)
     }
 
     resize()

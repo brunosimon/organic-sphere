@@ -41,7 +41,7 @@ export default class Sphere
         // Light A
         this.lights.a = {}
 
-        this.lights.a.intensity = 4.5
+        this.lights.a.intensity = 1.85
 
         this.lights.a.color = {}
         this.lights.a.color.value = '#ff3e00'
@@ -52,7 +52,7 @@ export default class Sphere
         // Light B
         this.lights.b = {}
 
-        this.lights.b.intensity = 2
+        this.lights.b.intensity = 1.4
 
         this.lights.b.color = {}
         this.lights.b.color.value = '#0063ff'
@@ -132,11 +132,11 @@ export default class Sphere
             {
                 uLightAColor: { value: this.lights.a.color.instance },
                 uLightAPosition: { value: new THREE.Vector3(1, 1, 0) },
-                uLightAIntensity: { value: 1 },
+                uLightAIntensity: { value: this.lights.a.intensity },
 
                 uLightBColor: { value: this.lights.b.color.instance },
                 uLightBPosition: { value: new THREE.Vector3(- 1, - 1, 0) },
-                uLightBIntensity: { value: 1 },
+                uLightBIntensity: { value: this.lights.b.intensity },
 
                 uSubdivision: { value: new THREE.Vector2(this.geometry.parameters.widthSegments, this.geometry.parameters.heightSegments) },
 

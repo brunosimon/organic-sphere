@@ -72,9 +72,9 @@ void main()
     float lightBIntensity = max(0.0, - dot(computedNormal.xyz, normalize(- uLightBPosition))) * uLightBIntensity;
 
     vec3 color = vec3(0.0);
-    // color = mix(color, uLightAColor, fresnel);
     color = mix(color, uLightAColor, lightAIntensity * fresnel);
     color = mix(color, uLightBColor, lightBIntensity * fresnel);
+    color = mix(color, vec3(1.0), clamp(pow(fresnel - 0.8, 3.0), 0.0, 1.0));
 
     // Varying
     vNormal = normal;
