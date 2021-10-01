@@ -1,9 +1,17 @@
 #define M_PI 3.1415926535897932384626433832795
 
+uniform vec3 uLightAColor;
+uniform vec3 uLightAPosition;
+uniform float uLightAIntensity;
+uniform vec3 uLightBColor;
+uniform vec3 uLightBPosition;
+uniform float uLightBIntensity;
+
 uniform float uDistortionFrequency;
 uniform float uDistortionStrength;
 uniform float uDisplacementFrequency;
 uniform float uDisplacementStrength;
+
 uniform float uTime;
 
 varying vec3 vNormal;
@@ -49,13 +57,8 @@ void main()
     computedNormal = normalize(computedNormal);
 
     // Color
-    vec3 uLightAColor = vec3(1.0, 0.2, 0.5);
-    vec3 uLightAPosition = vec3(1.0, 1.0, 0.0);
-    float lightAIntensity = max(0.0, - dot(normal.xyz, normalize(- uLightAPosition)));
-
-    vec3 uLightBColor = vec3(0.5, 0.2, 1.0);
-    vec3 uLightBPosition = vec3(- 1.0, - 0.5, 0.0);
-    float lightBIntensity = max(0.0, - dot(normal.xyz, normalize(- uLightBPosition)));
+    float lightAIntensity = max(0.0, - dot(normal.xyz, normalize(- uLightAPosition))) * uLightAIntensity;
+    float lightBIntensity = max(0.0, - dot(normal.xyz, normalize(- uLightBPosition))) * uLightBIntensity;
 
     vec3 color = vec3(0.0);
     color = mix(color, uLightAColor, lightAIntensity);
