@@ -20,8 +20,6 @@ uniform float uFresnelPower;
 
 uniform float uTime;
 
-varying vec3 vNormal;
-varying float vPerlinStrength;
 varying vec3 vColor;
 
 #pragma glslify: perlin4d = require('../partials/perlin4d.glsl')
@@ -77,7 +75,5 @@ void main()
     color = mix(color, vec3(1.0), clamp(pow(max(0.0, fresnel - 0.8), 3.0), 0.0, 1.0));
 
     // Varying
-    vNormal = normal;
-    vPerlinStrength = displacedPosition.a;
     vColor = color;
 }
