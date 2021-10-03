@@ -87,6 +87,44 @@ export default class Renderer
         )
         this.postProcess.unrealBloomPass.enabled = true
 
+        this.postProcess.unrealBloomPass.tintColor = {}
+        this.postProcess.unrealBloomPass.tintColor.value = '#7f00ff'
+        this.postProcess.unrealBloomPass.tintColor.instance = new THREE.Color(this.postProcess.unrealBloomPass.tintColor.value)
+        
+        this.postProcess.unrealBloomPass.compositeMaterial.uniforms.uTintColor = { value: this.postProcess.unrealBloomPass.tintColor.instance }
+        this.postProcess.unrealBloomPass.compositeMaterial.uniforms.uTintStrength = { value: 0.2 }
+        this.postProcess.unrealBloomPass.compositeMaterial.fragmentShader = `
+varying vec2 vUv;
+uniform sampler2D blurTexture1;
+uniform sampler2D blurTexture2;
+uniform sampler2D blurTexture3;
+uniform sampler2D blurTexture4;
+uniform sampler2D blurTexture5;
+uniform sampler2D dirtTexture;
+uniform float bloomStrength;
+uniform float bloomRadius;
+uniform float bloomFactors[NUM_MIPS];
+uniform vec3 bloomTintColors[NUM_MIPS];
+uniform vec3 uTintColor;
+uniform float uTintStrength;
+
+float lerpBloomFactor(const in float factor) {
+    float mirrorFactor = 1.2 - factor;
+    return mix(factor, mirrorFactor, bloomRadius);
+}
+
+void main() {
+    vec4 color = bloomStrength * ( lerpBloomFactor(bloomFactors[0]) * vec4(bloomTintColors[0], 1.0) * texture2D(blurTexture1, vUv) +
+        lerpBloomFactor(bloomFactors[1]) * vec4(bloomTintColors[1], 1.0) * texture2D(blurTexture2, vUv) +
+        lerpBloomFactor(bloomFactors[2]) * vec4(bloomTintColors[2], 1.0) * texture2D(blurTexture3, vUv) +
+        lerpBloomFactor(bloomFactors[3]) * vec4(bloomTintColors[3], 1.0) * texture2D(blurTexture4, vUv) +
+        lerpBloomFactor(bloomFactors[4]) * vec4(bloomTintColors[4], 1.0) * texture2D(blurTexture5, vUv) );
+
+    color.rgb = mix(color.rgb, uTintColor, uTintStrength);
+    gl_FragColor = color;
+}
+        `
+
         if(this.debug)
         {
             const debugFolder = this.debugFolder
@@ -120,6 +158,24 @@ export default class Renderer
                     this.postProcess.unrealBloomPass,
                     'threshold',
                     { min: 0, max: 1, step: 0.001 }
+                )
+            
+            debugFolder
+                .addInput(
+                    this.postProcess.unrealBloomPass.tintColor,
+                    'value',
+                    { view: 'uTintColor', label: 'color' }
+                )
+                .on('change', () =>
+                {
+                    this.postProcess.unrealBloomPass.tintColor.instance.set(this.postProcess.unrealBloomPass.tintColor.value)
+                })
+            
+            debugFolder
+                .addInput(
+                    this.postProcess.unrealBloomPass.compositeMaterial.uniforms.uTintStrength,
+                    'value',
+                    { label: 'uTintStrength', min: 0, max: 1, step: 0.001 }
                 )
         }
 
