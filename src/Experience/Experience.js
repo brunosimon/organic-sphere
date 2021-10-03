@@ -11,6 +11,7 @@ import Camera from './Camera.js'
 import World from './World.js'
 
 import assets from './assets.js'
+import Microphone from './Microphone.js'
 
 export default class Experience
 {
@@ -42,6 +43,7 @@ export default class Experience
         this.setCamera()
         this.setRenderer()
         this.setResources()
+        this.setMicrohopne()
         this.setWorld()
         
         this.sizes.on('resize', () =>
@@ -107,6 +109,11 @@ export default class Experience
         this.resources = new Resources(assets)
     }
 
+    setMicrohopne()
+    {
+        this.microphone = new Microphone()
+    }
+
     setWorld()
     {
         this.world = new World()
@@ -118,6 +125,9 @@ export default class Experience
             this.stats.update()
         
         this.camera.update()
+
+        if(this.microphone)
+            this.microphone.update()
 
         if(this.world)
             this.world.update()
@@ -145,6 +155,9 @@ export default class Experience
 
         if(this.renderer)
             this.renderer.resize()
+
+        if(this.world)
+            this.world.resize()
 
         if(this.world)
             this.world.resize()
